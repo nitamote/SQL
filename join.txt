@@ -1,0 +1,175 @@
+Create table Location
+(
+LocID int primary key not null,
+City varchar(20),
+Addr varchar(20)
+);
+
+insert into Location values(1,'Mumbai','MBP');
+insert into Location values(2,'Bangolre','ITPL');
+insert into Location values(3,'pune','Hinje wadi');
+insert into Location values(4,'Gurgaon','DLF2');
+insert into Location values(5,'Hydrabad','hitech');
+insert into Location values(6,'Mumbai','Cognizant');
+
+
+create table Dept
+(
+DeptId int Primary key,
+DName varchar(20),
+LocID int REFERENCES
+Location(LocID)
+);
+
+insert into Dept values(101,'Sales',1);
+insert into Dept values(102,'HR',3);
+insert into Dept values(103,'Finance',2);
+insert into Dept values(104,'MKGT',3);
+insert into Dept values(105,'OPS',4);
+insert into Dept values(106,'IT',4);
+insert into Dept values(107,'Trvl desk',4);
+insert into Dept values(108,'Foods',null);
+
+create table Emp
+(
+EmpID int primary key not null,
+FName varchar(20),
+LName varchar(20),
+DeptID int REFERENCES
+Dept(DeptID),
+MgrID int REFERENCES
+Emp(EmpId)
+);
+
+Alter table Emp 
+ADD COLUMN Salary decimal(8,2) ;
+
+insert into Emp values(1001,'Steeven','King',105,NULL,50000);
+insert into Emp values(1002,'Neena','Kochhar',105,1003,40000);
+insert into Emp values(1003,'Nancy','Greenberg',103,1002,,11000);
+insert into Emp values(1004,'Andrew','Lusk',102,1002,35000);
+insert into Emp values(1005,'Andy','Hillman',105,1001,30000);
+insert into Emp values(1006,'Steeven','Russel',101,1004,30000);
+insert into Emp values(1007,'Mark','Queen',NULL,NULL,60000);
+
+SELECT d.DName, l.City, l.Addr 
+From Dept d
+INNER JOIN Location l 
+ON d.LocID=l.LocID;
+
+SELECT d.DName, l.City, l.Addr 
+From 
+Dept d RIGHT OUTER JOIN Location l 
+ON d.LocID=l.LocID;
+
+SELECT DName, CONCAT(FName, ' ', LName) As EmpName, City, Addr
+From Dept INNER JOIN emp
+ON Dept.DeptID=Emp.DeptID
+INNER JOIN Location 
+ON Dept.LocID=Location.LocID;
+
+
+SELECT DName, CONCAT(FName, ' ', LName) As EmpName, City, Addr
+From Dept INNER JOIN Location
+ON Dept.LocID=Location.LocID
+INNER JOIN Emp 
+ON Dept.DeptID=Emp.DeptID;
+
+
+
+SELECT DName, CONCAT(FName, ' ', LName) As EmpName
+From Dept 
+RIGHT OUTER JOIN Emp 
+ON Dept.DeptID=Emp.DeptID;
+
+------------------------SELF JOIN(INNER JOIN)---------------------------
+
+SELECT CONCAT(emp.FName,' ', emp.LName) As 'Employee Name',CONCAT(mgr.FName,' ', mgr.LName) As 'Manager Name'
+FROM Emp emp INNER JOIN Emp mgr
+ON emp.MgrID=mgr.EmpID;
+
+------------------------SELF JOIN( LEFT OUTER JOIN)---------------------------
+
+SELECT CONCAT(emp.FName,' ', emp.LName) As 'Employee Name',CONCAT(mgr.FName,' ', mgr.LName) As 'Manager Name'
+FROM Emp emp LEFT OUTER JOIN Emp mgr
+ON emp.MgrID=mgr.EmpID;
+
+------------------------SELF JOIN( RIGHT OUTER JOIN)---------------------------
+SELECT CONCAT(mgr.FName,' ', mgr.LName) As 'Manager Name', CONCAT(emp.FName,' ', emp.LName) As 'Employee Name'
+FROM Emp emp RIGHT OUTER JOIN Emp mgr
+ON emp.MgrID=mgr.EmpID;
+
+------------------------SELF JOIN WITH NULL------------
+SELECT CONCAT(emp.FName,' ', emp.LName) As 'Employee Name',CONCAT(mgr.FName,' ', mgr.LName) As 'Manager Name'
+FROM Emp emp LEFT OUTER JOIN Emp mgr
+ON emp.MgrID=mgr.EmpID
+Where emp.MgrID is NULL;
+
+----------------SUBQUERY-------------------------------------
+
+SELECT CONCAT(emp.FName,' ', emp.LName) As 'Employee Name'
+FROM Emp
+WHERE MgrID=(SELECT MgrID FROM Emp 
+		WHERE FName='ANDREW' AND LName='Lusk')
+AND NOT(FName='ANDREW' AND LName='Lusk');
+
+---------------ROUND()-------------
+
+SELECT CONCAT(emp.FName,' ', emp.LName) As 'Employee Name',ROUND(Salary)
+FROM Emp
+	WHERE Salary=(SELECT MAX(Salary) FROM emp);
+
+----------------Second highest salary--------------
+
+SELECT CONCAT(emp.FName,' ', emp.LName) As 'Employee Name',ROUND(Salary)
+FROM Emp
+	WHERE Salary=(SELECT MAX(Salary) FROM emp
+		WHERE Salary< (SELECT Max(salary) From Emp)
+		);
+
+
+-------------Query-----------
+SELECT FName ,salary from Emp WHERE Salary=(SELECT DISTINCT Salary from emp 
+         ORDER BY Salary DESC LIMIT 3,1);
+
+
+-----------------INFORMATION SCHEMA-----------------------
+SELECT *
+    FROM INFORMATION_SCHEMA.Table_Constraints
+WHERE Table_Name = 'Emp';
+
+
+-----------Comparision operators----------
+
+SELECT LocID ,City FROM Location
+WHERE LocID =2 OR LocID =4;
+
+SELECT LocID ,City FROM Location
+WHERE LocID NOT IN(2,4);
+
+SELECT EmpID,FName,LName,Salary from Emp 
+ where DeptID = NULL;
+
+SELECT CONCAT(mgr.FName,' ', mgr.LName) As 'Manager Name',COUNT(CONCAT(mgr.FName,' ', mgr.LName))as 'mgr count', CONCAT(emp.FName,' ', emp.LName) As 'Employee Name',COUNT(CONCAT(emp.FName,' ', emp.LName)) as 'Emp count'
+FROM Emp emp RIGHT OUTER JOIN Emp mgr
+ON emp.MgrID=mgr.EmpID
+GROUP BY CONCAT(mgr.FName,' ', mgr.LName),CONCAT(emp.FName,' ', emp.LName);
+
+
+SELECT CONCAT(e1.FName,' ', e1.LName) As Emp_Name, e1.salary,
+COUNT(DISTINCT e2.Salary) As Row_Count
+	FROM Emp e1 INNER JOIN Emp e2
+	ON e1.Salary<=e2.Salary
+GROUP By e1.salary, CONCAT(e1.FName,' ', e1.LName)
+	HAVING Count(DISTINCT e2.salary)=4;
+
+
+SELECT CONCAT(e1.FName,' ', e1.LName) As Emp_Name, e1.salary
+FROM Emp e1 WHERE Salary>(SELECT AVG(Salary) FROM Emp);
+
+
+SELECT CONCAT(e1.FName,' ', e1.LName) As Emp_Name, e1.salary, e1.DeptID
+FROM Emp e1 WHERE Salary>(SELECT AVG(Salary)
+	 FROM Emp 
+		Where DeptID=e1.DeptID);
+
