@@ -1,0 +1,1997 @@
+Enter password: ****
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 10
+Server version: 5.5.61 MySQL Community Server (GPL)
+
+Copyright (c) 2000, 2018, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| adventureworks     |
+| assignment         |
+| datatype           |
+| mysql              |
+| performance_schema |
+| swapdata           |
+| test               |
+| vinudata           |
+| vita               |
++--------------------+
+10 rows in set (0.01 sec)
+
+mysql> use assignment;
+Database changed
+mysql> desc assignment;
+ERROR 1146 (42S02): Table 'assignment.assignment' doesn't exist
+mysql> select * from emp;
+ERROR 1146 (42S02): Table 'assignment.emp' doesn't exist
+mysql> select * from salespeople;
++------+---------+-----------+------+
+| SNUM | SName   | City      | Comm |
++------+---------+-----------+------+
+| 1001 | Peel    | Lodon     | 0.12 |
+| 1002 | Serres  | San jose  | 0.13 |
+| 1003 | Axelrod | New york  | 0.10 |
+| 1004 | Motika  | Lodon     | 0.11 |
+| 1005 | Fran    | Lodoon    | 0.26 |
+| 1007 | Rifkin  | Barcelona | 0.15 |
++------+---------+-----------+------+
+6 rows in set (0.00 sec)
+
+mysql> select * from custermers;
+ERROR 1146 (42S02): Table 'assignment.custermers' doesn't exist
+mysql> select * from customers;
++------+----------+----------+--------+------+
+| Cnum | Cname    | City     | rating | Snum |
++------+----------+----------+--------+------+
+| 2001 | Hoffman  | london   | 100    | 1001 |
+| 2002 | Giovanni | Rome     | 200    | 1003 |
+| 2003 | Liu      | San jose | 200    | 1002 |
+| 2004 | Grass    | Berlin   | 300    | 1002 |
+| 2006 | Clemens  | london   | 100    | 1001 |
+| 2007 | Pereira  | Rome     | 100    | 1004 |
+| 2008 | Cisneros | San jose | 300    | 1007 |
++------+----------+----------+--------+------+
+7 rows in set (0.00 sec)
+
+mysql> select * from orders;
++------+---------+------------+------+------+
+| Onum | Amt     | Odate      | Cnum | Snum |
++------+---------+------------+------+------+
+| 3001 |   18.69 | 1996-03-10 | 2008 | 1007 |
+| 3002 | 1900.10 | 1996-03-10 | 2007 | 1004 |
+| 3003 |  767.19 | 1996-03-10 | 2001 | 1001 |
+| 3005 | 5160.45 | 1996-03-10 | 2003 | 1002 |
+| 3006 | 1098.16 | 1996-03-10 | 2008 | 1007 |
+| 3007 |   75.75 | 1996-04-10 | 2002 | 1003 |
+| 3008 | 4723.00 | 1996-05-10 | 2006 | 1001 |
+| 3009 | 1713.23 | 1996-04-10 | 2002 | 1003 |
+| 3010 | 1309.95 | 1996-06-10 | 2004 | 1002 |
+| 3011 | 9891.88 | 1996-06-10 | 2006 | 1001 |
++------+---------+------------+------+------+
+10 rows in set (0.00 sec)
+
+mysql> SELECT CName from customers
+    ->     where City = 'San Jose';
++----------+
+| CName    |
++----------+
+| Liu      |
+| Cisneros |
++----------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT CName from customers
+    ->     where City = 'San Jose'
+    ->      AND Rating >200;
++----------+
+| CName    |
++----------+
+| Cisneros |
++----------+
+1 row in set (0.00 sec)
+
+mysql> SELECT * from customers
+    ->     where City = 'San Jose';
++------+----------+----------+--------+------+
+| Cnum | Cname    | City     | rating | Snum |
++------+----------+----------+--------+------+
+| 2003 | Liu      | San jose | 200    | 1002 |
+| 2008 | Cisneros | San jose | 300    | 1007 |
++------+----------+----------+--------+------+
+2 rows in set (0.00 sec)
+
+mysql> select
+    -> ONum,SName
+    -> from
+    -> salespeople s
+    -> INNER JOIN orders o
+    -> ON s.sunm = o.snum
+    -> GROUP BY ONum
+    -> order by onum desc;
+ERROR 1054 (42S22): Unknown column 's.sunm' in 'on clause'
+mysql> select
+    -> ONum,SName
+    -> from
+    -> salespeople s
+    -> INNER JOIN orders o
+    -> ON s.snum = o.snum
+    -> GROUP BY ONum
+    -> order by onum desc;
++------+---------+
+| ONum | SName   |
++------+---------+
+| 3011 | Peel    |
+| 3010 | Serres  |
+| 3009 | Axelrod |
+| 3008 | Peel    |
+| 3007 | Axelrod |
+| 3006 | Rifkin  |
+| 3005 | Serres  |
+| 3003 | Peel    |
+| 3002 | Motika  |
+| 3001 | Rifkin  |
++------+---------+
+10 rows in set (0.00 sec)
+
+mysql> select
+    -> ONum,SName, count(onum)
+    -> from
+    -> salespeople s
+    -> INNER JOIN orders o
+    -> ON s.snum = o.snum
+    -> GROUP BY ONum
+    -> order by onum desc;
++------+---------+-------------+
+| ONum | SName   | count(onum) |
++------+---------+-------------+
+| 3011 | Peel    |           1 |
+| 3010 | Serres  |           1 |
+| 3009 | Axelrod |           1 |
+| 3008 | Peel    |           1 |
+| 3007 | Axelrod |           1 |
+| 3006 | Rifkin  |           1 |
+| 3005 | Serres  |           1 |
+| 3003 | Peel    |           1 |
+| 3002 | Motika  |           1 |
+| 3001 | Rifkin  |           1 |
++------+---------+-------------+
+10 rows in set (0.00 sec)
+
+mysql> SELECT s.Sname , count(s.snum)
+    -> from salespeople s INNER JOIN customers c
+    -> on s.snum=c.snum;
++-------+---------------+
+| Sname | count(s.snum) |
++-------+---------------+
+| Peel  |             7 |
++-------+---------------+
+1 row in set (0.00 sec)
+
+mysql> select
+    -> ONum,SName,
+    -> from
+    -> salespeople s
+    -> INNER JOIN orders o
+    -> ON s.snum = o.snum
+    -> where orders= (select max(onum)
+    -> from orders
+    ->       );
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'from
+salespeople s
+INNER JOIN orders o
+ON s.snum = o.snum
+where orders= (select' at line 3
+mysql> select
+    -> ONum,SName,
+    -> from
+    -> salespeople s
+    -> INNER JOIN orders o
+    -> ON s.snum = o.snum;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'from
+salespeople s
+INNER JOIN orders o
+ON s.snum = o.snum' at line 3
+mysql> select
+    -> ONum,SName
+    -> from
+    -> salespeople s
+    -> INNER JOIN orders o
+    -> ON s.snum = o.snum
+    -> where orders= (select max(onum)
+    -> from orders
+    ->       );
+ERROR 1054 (42S22): Unknown column 'orders' in 'where clause'
+mysql>
+mysql>
+mysql>
+mysql> select onum,sname
+    -> from salespeople s
+    -> INNER JOIN  orders o
+    -> ON c.snum=o.snum
+    -> where sname = 'Motika';
+ERROR 1054 (42S22): Unknown column 'c.snum' in 'on clause'
+mysql> select onum,sname
+    -> from salespeople s
+    -> INNER JOIN  orders o
+    -> ON s.snum=o.snum
+    -> where sname = 'Motika';
++------+--------+
+| onum | sname  |
++------+--------+
+| 3002 | Motika |
++------+--------+
+1 row in set (0.00 sec)
+
+mysql> SELECT CName
+    -> from customers c
+    -> INNER JOIN orders o
+    -> ON c.snum=o.snum
+    -> where odate like'%1003';
+Empty set, 1 warning (0.00 sec)
+
+mysql> SELECT CName
+    -> from customers c
+    -> INNER JOIN orders o
+    -> ON c.snum=o.snum
+    -> where odate like'%-03-10';
++----------+
+| CName    |
++----------+
+| Cisneros |
+| Pereira  |
+| Hoffman  |
+| Clemens  |
+| Liu      |
+| Grass    |
+| Cisneros |
++----------+
+7 rows in set, 1 warning (0.00 sec)
+
+mysql> SELECT s.Sname , count(s.sname) as count
+    -> from salespeople s INNER JOIN customers c
+    -> on s.snum=c.snum
+    -> where count(s.sname)>1;
+ERROR 1111 (HY000): Invalid use of group function
+mysql> SELECT s.Sname , count(s.sname) as count
+    -> from salespeople s INNER JOIN customers c
+    -> on s.snum=c.snum;
++-------+-------+
+| Sname | count |
++-------+-------+
+| Peel  |     7 |
++-------+-------+
+1 row in set (0.00 sec)
+
+mysql> select
+    -> ONum,SName, count(onum)
+    -> from
+    -> salespeople s
+    -> INNER JOIN orders o
+    -> ON s.snum = o.snum
+    -> GROUP BY ONum
+    -> order by onum desc;
++------+---------+-------------+
+| ONum | SName   | count(onum) |
++------+---------+-------------+
+| 3011 | Peel    |           1 |
+| 3010 | Serres  |           1 |
+| 3009 | Axelrod |           1 |
+| 3008 | Peel    |           1 |
+| 3007 | Axelrod |           1 |
+| 3006 | Rifkin  |           1 |
+| 3005 | Serres  |           1 |
+| 3003 | Peel    |           1 |
+| 3002 | Motika  |           1 |
+| 3001 | Rifkin  |           1 |
++------+---------+-------------+
+10 rows in set (0.00 sec)
+
+mysql> select
+    -> ONum,SName, count(snum)
+    -> from
+    -> salespeople s
+    -> INNER JOIN orders o
+    -> ON s.snum = o.snum
+    -> GROUP BY ONum
+    -> order by onum desc;
+ERROR 1052 (23000): Column 'snum' in field list is ambiguous
+mysql>
+mysql> select
+    -> ONum,SName, count(o.snum)
+    -> from
+    -> salespeople s
+    -> INNER JOIN orders o
+    -> ON s.snum = o.snum
+    -> GROUP BY ONum
+    -> order by onum desc;
++------+---------+---------------+
+| ONum | SName   | count(o.snum) |
++------+---------+---------------+
+| 3011 | Peel    |             1 |
+| 3010 | Serres  |             1 |
+| 3009 | Axelrod |             1 |
+| 3008 | Peel    |             1 |
+| 3007 | Axelrod |             1 |
+| 3006 | Rifkin  |             1 |
+| 3005 | Serres  |             1 |
+| 3003 | Peel    |             1 |
+| 3002 | Motika  |             1 |
+| 3001 | Rifkin  |             1 |
++------+---------+---------------+
+10 rows in set (0.00 sec)
+
+mysql> select
+    -> SName, count(o.snum)
+    -> from
+    -> salespeople s
+    -> INNER JOIN orders o
+    -> ON s.snum = o.snum
+    -> GROUP BY Sname
+    -> order by count(o.snum) desc;
++---------+---------------+
+| SName   | count(o.snum) |
++---------+---------------+
+| Peel    |             3 |
+| Serres  |             2 |
+| Axelrod |             2 |
+| Rifkin  |             2 |
+| Motika  |             1 |
++---------+---------------+
+5 rows in set (0.00 sec)
+
+mysql> Select * from orders;
++------+---------+------------+------+------+
+| Onum | Amt     | Odate      | Cnum | Snum |
++------+---------+------------+------+------+
+| 3001 |   18.69 | 1996-03-10 | 2008 | 1007 |
+| 3002 | 1900.10 | 1996-03-10 | 2007 | 1004 |
+| 3003 |  767.19 | 1996-03-10 | 2001 | 1001 |
+| 3005 | 5160.45 | 1996-03-10 | 2003 | 1002 |
+| 3006 | 1098.16 | 1996-03-10 | 2008 | 1007 |
+| 3007 |   75.75 | 1996-04-10 | 2002 | 1003 |
+| 3008 | 4723.00 | 1996-05-10 | 2006 | 1001 |
+| 3009 | 1713.23 | 1996-04-10 | 2002 | 1003 |
+| 3010 | 1309.95 | 1996-06-10 | 2004 | 1002 |
+| 3011 | 9891.88 | 1996-06-10 | 2006 | 1001 |
++------+---------+------------+------+------+
+10 rows in set (0.00 sec)
+
+mysql> Select * from salespeople;
++------+---------+-----------+------+
+| SNUM | SName   | City      | Comm |
++------+---------+-----------+------+
+| 1001 | Peel    | Lodon     | 0.12 |
+| 1002 | Serres  | San jose  | 0.13 |
+| 1003 | Axelrod | New york  | 0.10 |
+| 1004 | Motika  | Lodon     | 0.11 |
+| 1005 | Fran    | Lodoon    | 0.26 |
+| 1007 | Rifkin  | Barcelona | 0.15 |
++------+---------+-----------+------+
+6 rows in set (0.00 sec)
+
+mysql> Select * from customers;
++------+----------+----------+--------+------+
+| Cnum | Cname    | City     | rating | Snum |
++------+----------+----------+--------+------+
+| 2001 | Hoffman  | london   | 100    | 1001 |
+| 2002 | Giovanni | Rome     | 200    | 1003 |
+| 2003 | Liu      | San jose | 200    | 1002 |
+| 2004 | Grass    | Berlin   | 300    | 1002 |
+| 2006 | Clemens  | london   | 100    | 1001 |
+| 2007 | Pereira  | Rome     | 100    | 1004 |
+| 2008 | Cisneros | San jose | 300    | 1007 |
++------+----------+----------+--------+------+
+7 rows in set (0.00 sec)
+
+mysql> SELECT * from customers
+    ->     where City = 'San Jose';
++------+----------+----------+--------+------+
+| Cnum | Cname    | City     | rating | Snum |
++------+----------+----------+--------+------+
+| 2003 | Liu      | San jose | 200    | 1002 |
+| 2008 | Cisneros | San jose | 300    | 1007 |
++------+----------+----------+--------+------+
+2 rows in set (0.00 sec)
+
+mysql>  SELECT Sname, SNum From salespeople s
+    -> INNER Join Customers c
+    -> on s.Snum=c.SNum
+    ->        Group by snum having count(cnum)>1;
+ERROR 1052 (23000): Column 'SNum' in field list is ambiguous
+mysql> SELECT Sname, s.SNum From salespeople s
+    -> INNER Join Customers c
+    -> on s.Snum=c.SNum
+    ->        Group by c.snum having count(cnum)>1;
++--------+------+
+| Sname  | SNum |
++--------+------+
+| Peel   | 1001 |
+| Serres | 1002 |
++--------+------+
+2 rows in set (0.00 sec)
+
+mysql> select
+    -> SName, count(o.snum)
+    -> from
+    -> salespeople s
+    -> INNER JOIN orders o
+    -> ON s.snum = o.snum
+    -> GROUP BY Sname
+    -> Having count(Sname)>1;
++---------+---------------+
+| SName   | count(o.snum) |
++---------+---------------+
+| Axelrod |             2 |
+| Peel    |             3 |
+| Rifkin  |             2 |
+| Serres  |             2 |
++---------+---------------+
+4 rows in set (0.00 sec)
+
+mysql> select
+    -> SName, count(c.snum)
+    -> from
+    -> salespeople s
+    -> INNER JOIN customers c
+    -> ON s.snum = c.snum
+    -> GROUP BY Sname
+    -> Having count(Sname)>1;
++--------+---------------+
+| SName  | count(c.snum) |
++--------+---------------+
+| Peel   |             2 |
+| Serres |             2 |
++--------+---------------+
+2 rows in set (0.00 sec)
+
+mysql> select
+    -> SName, count(c.snum) As CustCount
+    -> from
+    -> salespeople s
+    -> INNER JOIN customers c
+    -> ON s.snum = c.snum
+    -> GROUP BY Sname
+    -> Having count(Sname)>1;
++--------+-----------+
+| SName  | CustCount |
++--------+-----------+
+| Peel   |         2 |
+| Serres |         2 |
++--------+-----------+
+2 rows in set (0.00 sec)
+
+mysql> select * from
+    ->     customers
+    ->   where (select count(*) from customers
+    ->     where city ='San jose')>1 ;
++------+----------+----------+--------+------+
+| Cnum | Cname    | City     | rating | Snum |
++------+----------+----------+--------+------+
+| 2001 | Hoffman  | london   | 100    | 1001 |
+| 2002 | Giovanni | Rome     | 200    | 1003 |
+| 2003 | Liu      | San jose | 200    | 1002 |
+| 2004 | Grass    | Berlin   | 300    | 1002 |
+| 2006 | Clemens  | london   | 100    | 1001 |
+| 2007 | Pereira  | Rome     | 100    | 1004 |
+| 2008 | Cisneros | San jose | 300    | 1007 |
++------+----------+----------+--------+------+
+7 rows in set (0.00 sec)
+
+mysql> select * from
+    ->     customers
+    ->   where (select count(*) from customers
+    ->     where city ='San jose')>2 ;
+Empty set (0.00 sec)
+
+mysql> select * from
+    ->     customers
+    ->   where (select count(*) from customers
+    ->     where city ='London');
++------+----------+----------+--------+------+
+| Cnum | Cname    | City     | rating | Snum |
++------+----------+----------+--------+------+
+| 2001 | Hoffman  | london   | 100    | 1001 |
+| 2002 | Giovanni | Rome     | 200    | 1003 |
+| 2003 | Liu      | San jose | 200    | 1002 |
+| 2004 | Grass    | Berlin   | 300    | 1002 |
+| 2006 | Clemens  | london   | 100    | 1001 |
+| 2007 | Pereira  | Rome     | 100    | 1004 |
+| 2008 | Cisneros | San jose | 300    | 1007 |
++------+----------+----------+--------+------+
+7 rows in set (0.00 sec)
+
+mysql> select * from
+    ->     customers
+    ->     having( city ='San Jose')>1;
+Empty set (0.00 sec)
+
+mysql> select * from
+    ->     customers
+    ->   where (select count(city) from customers
+    ->     where city ='San Jose')>1;
++------+----------+----------+--------+------+
+| Cnum | Cname    | City     | rating | Snum |
++------+----------+----------+--------+------+
+| 2001 | Hoffman  | london   | 100    | 1001 |
+| 2002 | Giovanni | Rome     | 200    | 1003 |
+| 2003 | Liu      | San jose | 200    | 1002 |
+| 2004 | Grass    | Berlin   | 300    | 1002 |
+| 2006 | Clemens  | london   | 100    | 1001 |
+| 2007 | Pereira  | Rome     | 100    | 1004 |
+| 2008 | Cisneros | San jose | 300    | 1007 |
++------+----------+----------+--------+------+
+7 rows in set (0.00 sec)
+
+mysql>  SELECT Cname, Sname
+    -> From salespeople s INNER JOIN customers c
+    -> On s.Snum=c.Snum
+    -> where group by city;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'group by city' at line 4
+mysql> SELECT Cname, Sname
+    -> From salespeople s INNER JOIN customers c
+    -> On s.Snum=c.Snum
+    -> group by city;
+ERROR 1052 (23000): Column 'city' in group statement is ambiguous
+mysql>  SELECT Cname, Sname
+    -> From salespeople s INNER JOIN customers c
+    -> On s.Snum=c.Snum
+    -> group by c.city;
++----------+---------+
+| Cname    | Sname   |
++----------+---------+
+| Grass    | Serres  |
+| Hoffman  | Peel    |
+| Giovanni | Axelrod |
+| Liu      | Serres  |
++----------+---------+
+4 rows in set (0.00 sec)
+
+mysql> Select * from salespeople;
++------+---------+-----------+------+
+| SNUM | SName   | City      | Comm |
++------+---------+-----------+------+
+| 1001 | Peel    | Lodon     | 0.12 |
+| 1002 | Serres  | San jose  | 0.13 |
+| 1003 | Axelrod | New york  | 0.10 |
+| 1004 | Motika  | Lodon     | 0.11 |
+| 1005 | Fran    | Lodoon    | 0.26 |
+| 1007 | Rifkin  | Barcelona | 0.15 |
++------+---------+-----------+------+
+6 rows in set (0.00 sec)
+
+mysql> SELECT Cname, Sname
+    -> From salespeople s INNER JOIN customers c
+    -> On s.Snum=c.Snum;
++----------+---------+
+| Cname    | Sname   |
++----------+---------+
+| Hoffman  | Peel    |
+| Clemens  | Peel    |
+| Liu      | Serres  |
+| Grass    | Serres  |
+| Giovanni | Axelrod |
+| Pereira  | Motika  |
+| Cisneros | Rifkin  |
++----------+---------+
+7 rows in set (0.00 sec)
+
+mysql>  SELECT Cname, Sname,c.city
+    -> From salespeople s INNER JOIN customers c
+    -> On s.Snum=c.Snum
+    -> order by c.city;
++----------+---------+----------+
+| Cname    | Sname   | city     |
++----------+---------+----------+
+| Grass    | Serres  | Berlin   |
+| Hoffman  | Peel    | london   |
+| Clemens  | Peel    | london   |
+| Giovanni | Axelrod | Rome     |
+| Pereira  | Motika  | Rome     |
+| Liu      | Serres  | San jose |
+| Cisneros | Rifkin  | San jose |
++----------+---------+----------+
+7 rows in set (0.00 sec)
+
+mysql> SELECT CName
+    -> from customers c
+    -> INNER JOIN orders o
+    -> ON c.snum=o.snum
+    -> where odate like'%-03-10';
++----------+
+| CName    |
++----------+
+| Cisneros |
+| Pereira  |
+| Hoffman  |
+| Clemens  |
+| Liu      |
+| Grass    |
+| Cisneros |
++----------+
+7 rows in set, 1 warning (0.00 sec)
+
+mysql> SELECT Cname, Sname, city
+    -> From salespeople s INNER JOIN customers c
+    -> On s.city=c.city
+    -> order by c.city;
+ERROR 1052 (23000): Column 'city' in field list is ambiguous
+mysql>
+mysql> SELECT Cname, Sname, s.city
+    -> From salespeople s INNER JOIN customers c
+    -> On s.city=c.city
+    -> order by c.city;
++----------+--------+----------+
+| Cname    | Sname  | city     |
++----------+--------+----------+
+| Liu      | Serres | San jose |
+| Cisneros | Serres | San jose |
++----------+--------+----------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT Cname, Sname, c.city
+    -> From salespeople s INNER JOIN customers c
+    -> On s.city=c.city
+    -> order by c.city;
++----------+--------+----------+
+| Cname    | Sname  | city     |
++----------+--------+----------+
+| Liu      | Serres | San jose |
+| Cisneros | Serres | San jose |
++----------+--------+----------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT Cname, Sname, c.city
+    -> From salespeople s left outer JOIN customers c
+    -> On s.city=c.city
+    -> order by c.city;
++----------+---------+----------+
+| Cname    | Sname   | city     |
++----------+---------+----------+
+| NULL     | Axelrod | NULL     |
+| NULL     | Peel    | NULL     |
+| NULL     | Motika  | NULL     |
+| NULL     | Fran    | NULL     |
+| NULL     | Rifkin  | NULL     |
+| Liu      | Serres  | San jose |
+| Cisneros | Serres  | San jose |
++----------+---------+----------+
+7 rows in set (0.00 sec)
+
+mysql>  SELECT Cname, Sname, c.city
+    -> From salespeople s left outer JOIN customers c
+    -> On s.snum=c.cnum
+    -> order by c.city;
++-------+---------+------+
+| Cname | Sname   | city |
++-------+---------+------+
+| NULL  | Motika  | NULL |
+| NULL  | Peel    | NULL |
+| NULL  | Fran    | NULL |
+| NULL  | Serres  | NULL |
+| NULL  | Rifkin  | NULL |
+| NULL  | Axelrod | NULL |
++-------+---------+------+
+6 rows in set (0.00 sec)
+
+mysql>  SELECT Cname, Sname, c.city
+    -> From salespeople s left outer JOIN customers c
+    -> On s.snum=c.snum
+    -> where s.city=c.city
+    -> order by c.city;
++-------+--------+----------+
+| Cname | Sname  | city     |
++-------+--------+----------+
+| Liu   | Serres | San jose |
++-------+--------+----------+
+1 row in set (0.00 sec)
+
+mysql> SELECT Cname, Sname, c.city
+    -> From salespeople s inner JOIN customers c
+    -> On s.snum=c.snum
+    -> where s.city=c.city
+    -> order by c.city;
++-------+--------+----------+
+| Cname | Sname  | city     |
++-------+--------+----------+
+| Liu   | Serres | San jose |
++-------+--------+----------+
+1 row in set (0.00 sec)
+
+mysql> SELECT Cname, Sname, c.city
+    -> From salespeople s inner JOIN customers c
+    -> On s.snum=c.snum
+    -> where s.city=c.city;
++-------+--------+----------+
+| Cname | Sname  | city     |
++-------+--------+----------+
+| Liu   | Serres | San jose |
++-------+--------+----------+
+1 row in set (0.00 sec)
+
+mysql> SELECT Cname, Sname, c.city
+    -> From salespeople s inner JOIN customers c
+    -> On s.snum=c.snum
+    -> ;
++----------+---------+----------+
+| Cname    | Sname   | city     |
++----------+---------+----------+
+| Hoffman  | Peel    | london   |
+| Clemens  | Peel    | london   |
+| Liu      | Serres  | San jose |
+| Grass    | Serres  | Berlin   |
+| Giovanni | Axelrod | Rome     |
+| Pereira  | Motika  | Rome     |
+| Cisneros | Rifkin  | San jose |
++----------+---------+----------+
+7 rows in set (0.00 sec)
+
+mysql> SELECT Cname, Sname, c.city
+    -> From salespeople s inner JOIN customers c
+    -> On s.snum=c.snum
+    -> where s.city=c.city;
++-------+--------+----------+
+| Cname | Sname  | city     |
++-------+--------+----------+
+| Liu   | Serres | San jose |
++-------+--------+----------+
+1 row in set (0.00 sec)
+
+mysql> select
+    -> ONum,SName
+    -> from
+    -> salespeople s
+    -> INNER JOIN orders o
+    -> ON s.snum = o.snum
+    -> where orders= (select max(onum)
+    -> from orders
+    ->       );
+ERROR 1054 (42S22): Unknown column 'orders' in 'where clause'
+mysql> select
+    -> SName, count(c.snum) As CustCount
+    -> from
+    -> salespeople s
+    -> INNER JOIN customers c
+    -> ON s.snum = c.snum
+    -> GROUP BY Sname;
++---------+-----------+
+| SName   | CustCount |
++---------+-----------+
+| Axelrod |         1 |
+| Motika  |         1 |
+| Peel    |         2 |
+| Rifkin  |         1 |
+| Serres  |         2 |
++---------+-----------+
+5 rows in set (0.00 sec)
+
+mysql> select
+    -> SName, count(o.snum) As CustCount
+    -> from
+    -> salespeople s
+    -> INNER JOIN order o
+    -> ON s.snum = o.snum
+    -> GROUP BY Sname;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'order o
+ON s.snum = o.snum
+GROUP BY Sname' at line 5
+mysql> select
+    -> SName, count(o.snum) As CustCount
+    -> from
+    -> salespeople s
+    -> INNER JOIN orders o
+    -> ON s.snum = o.snum
+    -> GROUP BY Sname;
++---------+-----------+
+| SName   | CustCount |
++---------+-----------+
+| Axelrod |         2 |
+| Motika  |         1 |
+| Peel    |         3 |
+| Rifkin  |         2 |
+| Serres  |         2 |
++---------+-----------+
+5 rows in set (0.00 sec)
+
+mysql> select
+    -> SName, count(o.snum) As OrderCount
+    -> from
+    -> salespeople s
+    -> INNER JOIN orders o
+    -> ON s.snum = o.snum
+    -> GROUP BY Sname
+    -> Order by OrderCount;
++---------+------------+
+| SName   | OrderCount |
++---------+------------+
+| Motika  |          1 |
+| Serres  |          2 |
+| Axelrod |          2 |
+| Rifkin  |          2 |
+| Peel    |          3 |
++---------+------------+
+5 rows in set (0.00 sec)
+
+mysql> select
+    -> SName, count(o.snum) As OrderCount, max(o.amt) As AMOUNT
+    -> from
+    -> salespeople s
+    -> INNER JOIN orders o
+    -> ON s.snum = o.snum
+    -> GROUP BY Sname
+    -> Order by OrderCount;
++---------+------------+---------+
+| SName   | OrderCount | AMOUNT  |
++---------+------------+---------+
+| Motika  |          1 | 1900.10 |
+| Serres  |          2 | 5160.45 |
+| Axelrod |          2 | 1713.23 |
+| Rifkin  |          2 | 1098.16 |
+| Peel    |          3 | 9891.88 |
++---------+------------+---------+
+5 rows in set (0.01 sec)
+
+mysql> select
+    -> s.Snum, SName, count(o.snum) As OrderCount, max(o.amt) As AMOUNT
+    -> from
+    -> salespeople s
+    -> INNER JOIN orders o
+    -> ON s.snum = o.snum
+    -> GROUP BY Sname
+    -> Order by OrderCount;
++------+---------+------------+---------+
+| Snum | SName   | OrderCount | AMOUNT  |
++------+---------+------------+---------+
+| 1004 | Motika  |          1 | 1900.10 |
+| 1002 | Serres  |          2 | 5160.45 |
+| 1003 | Axelrod |          2 | 1713.23 |
+| 1007 | Rifkin  |          2 | 1098.16 |
+| 1001 | Peel    |          3 | 9891.88 |
++------+---------+------------+---------+
+5 rows in set (0.00 sec)
+
+mysql> select
+    -> s.Snum, SName, count(o.snum) As OrderCount, max(o.amt) As AMOUNT
+    -> from
+    -> salespeople s
+    -> INNER JOIN orders o
+    -> ON s.snum = o.snum
+    -> GROUP BY Sname
+    -> Order by s.Snum;
++------+---------+------------+---------+
+| Snum | SName   | OrderCount | AMOUNT  |
++------+---------+------------+---------+
+| 1001 | Peel    |          3 | 9891.88 |
+| 1002 | Serres  |          2 | 5160.45 |
+| 1003 | Axelrod |          2 | 1713.23 |
+| 1004 | Motika  |          1 | 1900.10 |
+| 1007 | Rifkin  |          2 | 1098.16 |
++------+---------+------------+---------+
+5 rows in set (0.00 sec)
+
+mysql> select
+    -> s.Snum, SName, count(o.snum) As OrderCount, max(o.amt) As AMOUNT, o.odate
+    -> from
+    -> salespeople s
+    -> INNER JOIN orders o
+    -> ON s.snum = o.snum
+    -> GROUP BY Sname
+    -> Order by s.Snum;
++------+---------+------------+---------+------------+
+| Snum | SName   | OrderCount | AMOUNT  | odate      |
++------+---------+------------+---------+------------+
+| 1001 | Peel    |          3 | 9891.88 | 1996-03-10 |
+| 1002 | Serres  |          2 | 5160.45 | 1996-03-10 |
+| 1003 | Axelrod |          2 | 1713.23 | 1996-04-10 |
+| 1004 | Motika  |          1 | 1900.10 | 1996-03-10 |
+| 1007 | Rifkin  |          2 | 1098.16 | 1996-03-10 |
++------+---------+------------+---------+------------+
+5 rows in set (0.00 sec)
+
+mysql>    select
+    -> s.Snum, SName, count(o.snum) As OrderCount, max(o.amt) As AMOUNT, o.odate
+    -> from
+    -> salespeople s
+    -> INNER JOIN orders o
+    -> ON s.snum = o.snum
+    -> GROUP BY odate
+    -> Order by s.Snum;
++------+---------+------------+---------+------------+
+| Snum | SName   | OrderCount | AMOUNT  | odate      |
++------+---------+------------+---------+------------+
+| 1001 | Peel    |          5 | 5160.45 | 1996-03-10 |
+| 1001 | Peel    |          1 | 4723.00 | 1996-05-10 |
+| 1001 | Peel    |          2 | 9891.88 | 1996-06-10 |
+| 1003 | Axelrod |          2 | 1713.23 | 1996-04-10 |
++------+---------+------------+---------+------------+
+4 rows in set (0.00 sec)
+
+mysql>    select sname, odate, max(amt)
+    -> from salespeople s inner join orders o
+    -> on s.snum=o.snum
+    -> group by odate;
++---------+------------+----------+
+| sname   | odate      | max(amt) |
++---------+------------+----------+
+| Peel    | 1996-03-10 |  5160.45 |
+| Axelrod | 1996-04-10 |  1713.23 |
+| Peel    | 1996-05-10 |  4723.00 |
+| Peel    | 1996-06-10 |  9891.88 |
++---------+------------+----------+
+4 rows in set (0.00 sec)
+
+mysql> select * from orders;
++------+---------+------------+------+------+
+| Onum | Amt     | Odate      | Cnum | Snum |
++------+---------+------------+------+------+
+| 3001 |   18.69 | 1996-03-10 | 2008 | 1007 |
+| 3002 | 1900.10 | 1996-03-10 | 2007 | 1004 |
+| 3003 |  767.19 | 1996-03-10 | 2001 | 1001 |
+| 3005 | 5160.45 | 1996-03-10 | 2003 | 1002 |
+| 3006 | 1098.16 | 1996-03-10 | 2008 | 1007 |
+| 3007 |   75.75 | 1996-04-10 | 2002 | 1003 |
+| 3008 | 4723.00 | 1996-05-10 | 2006 | 1001 |
+| 3009 | 1713.23 | 1996-04-10 | 2002 | 1003 |
+| 3010 | 1309.95 | 1996-06-10 | 2004 | 1002 |
+| 3011 | 9891.88 | 1996-06-10 | 2006 | 1001 |
++------+---------+------------+------+------+
+10 rows in set (0.00 sec)
+
+mysql> select sname, odate, max(amt)
+    -> from salespeople s inner join orders o
+    -> on s.snum=o.snum
+    -> group by o.snum;
++---------+------------+----------+
+| sname   | odate      | max(amt) |
++---------+------------+----------+
+| Peel    | 1996-03-10 |  9891.88 |
+| Serres  | 1996-03-10 |  5160.45 |
+| Axelrod | 1996-04-10 |  1713.23 |
+| Motika  | 1996-03-10 |  1900.10 |
+| Rifkin  | 1996-03-10 |  1098.16 |
++---------+------------+----------+
+5 rows in set (0.00 sec)
+
+mysql>
+mysql> select sname, odate, max(amt)
+    -> from salespeople s inner join orders o
+    -> on s.snum=o.snum
+    -> group by o.snum, odate;
++---------+------------+----------+
+| sname   | odate      | max(amt) |
++---------+------------+----------+
+| Peel    | 1996-03-10 |   767.19 |
+| Peel    | 1996-05-10 |  4723.00 |
+| Peel    | 1996-06-10 |  9891.88 |
+| Serres  | 1996-03-10 |  5160.45 |
+| Serres  | 1996-06-10 |  1309.95 |
+| Axelrod | 1996-04-10 |  1713.23 |
+| Motika  | 1996-03-10 |  1900.10 |
+| Rifkin  | 1996-03-10 |  1098.16 |
++---------+------------+----------+
+8 rows in set (0.00 sec)
+
+mysql> select *
+    -> from orders
+    -> where amt>(odate='19960610');
++------+---------+------------+------+------+
+| Onum | Amt     | Odate      | Cnum | Snum |
++------+---------+------------+------+------+
+| 3001 |   18.69 | 1996-03-10 | 2008 | 1007 |
+| 3002 | 1900.10 | 1996-03-10 | 2007 | 1004 |
+| 3003 |  767.19 | 1996-03-10 | 2001 | 1001 |
+| 3005 | 5160.45 | 1996-03-10 | 2003 | 1002 |
+| 3006 | 1098.16 | 1996-03-10 | 2008 | 1007 |
+| 3007 |   75.75 | 1996-04-10 | 2002 | 1003 |
+| 3008 | 4723.00 | 1996-05-10 | 2006 | 1001 |
+| 3009 | 1713.23 | 1996-04-10 | 2002 | 1003 |
+| 3010 | 1309.95 | 1996-06-10 | 2004 | 1002 |
+| 3011 | 9891.88 | 1996-06-10 | 2006 | 1001 |
++------+---------+------------+------+------+
+10 rows in set (0.00 sec)
+
+mysql> select *
+    -> from orders
+    -> where max(amt)>(odate='19960610');
+ERROR 1111 (HY000): Invalid use of group function
+mysql> select *
+    -> from orders
+    -> (SELECT max(amt)>ANY(odate='19960610') FROM Orders);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '(SELECT max(amt)>ANY(odate='19960610') FROM Orders)' at line 3
+mysql> SELECT Cname, Sname, rating
+    -> From salespeople s inner JOIN customers c
+    -> On s.snum=c.snum
+    -> WHERE rating EXISTS(300);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'EXISTS(300)' at line 4
+mysql> SELECT Cname, Sname, rating
+    -> From salespeople s inner JOIN customers c
+    -> On s.snum=c.snum
+    -> WHERE rating EXISTS IN(300);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'EXISTS IN(300)' at line 4
+mysql> SELECT Cname, Sname, rating
+    -> From salespeople s inner JOIN customers c
+    -> On s.snum=c.snum
+    -> WHERE rating  IN(300);
++----------+--------+--------+
+| Cname    | Sname  | rating |
++----------+--------+--------+
+| Grass    | Serres | 300    |
+| Cisneros | Rifkin | 300    |
++----------+--------+--------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT Cname, Sname
+    -> From salespeople s inner JOIN customers c
+    -> On s.snum=c.snum
+    -> WHERE EXISTS(SELECT  rating from customers
+    -> where rating =300);
++----------+---------+
+| Cname    | Sname   |
++----------+---------+
+| Hoffman  | Peel    |
+| Clemens  | Peel    |
+| Liu      | Serres  |
+| Grass    | Serres  |
+| Giovanni | Axelrod |
+| Pereira  | Motika  |
+| Cisneros | Rifkin  |
++----------+---------+
+7 rows in set (0.00 sec)
+
+mysql> SELECT CName,odate
+    -> From orders o inner JOIN customers c
+    ->      On o.snum=c.snum
+    -> where cname='haffman';
+Empty set (0.00 sec)
+
+mysql> SELECT CName,odate
+    -> From orders o inner JOIN customers c
+    ->      On o.snum=c.snum
+    -> where cname='hoffman';
++---------+------------+
+| CName   | odate      |
++---------+------------+
+| Hoffman | 1996-03-10 |
+| Hoffman | 1996-05-10 |
+| Hoffman | 1996-06-10 |
++---------+------------+
+3 rows in set (0.00 sec)
+
+mysql> select * from orders;
++------+---------+------------+------+------+
+| Onum | Amt     | Odate      | Cnum | Snum |
++------+---------+------------+------+------+
+| 3001 |   18.69 | 1996-03-10 | 2008 | 1007 |
+| 3002 | 1900.10 | 1996-03-10 | 2007 | 1004 |
+| 3003 |  767.19 | 1996-03-10 | 2001 | 1001 |
+| 3005 | 5160.45 | 1996-03-10 | 2003 | 1002 |
+| 3006 | 1098.16 | 1996-03-10 | 2008 | 1007 |
+| 3007 |   75.75 | 1996-04-10 | 2002 | 1003 |
+| 3008 | 4723.00 | 1996-05-10 | 2006 | 1001 |
+| 3009 | 1713.23 | 1996-04-10 | 2002 | 1003 |
+| 3010 | 1309.95 | 1996-06-10 | 2004 | 1002 |
+| 3011 | 9891.88 | 1996-06-10 | 2006 | 1001 |
++------+---------+------------+------+------+
+10 rows in set (0.00 sec)
+
+mysql> SElECT sname,comm
+    -> From Salespeople
+    -> Where city='London';
+Empty set (0.00 sec)
+
+mysql>
+mysql> select *SElECT *
+    -> From Salespeople
+    -> Where city='London';
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'SElECT *
+From Salespeople
+Where city='London'' at line 1
+mysql> SElECT *
+    -> From Salespeople
+    -> Where city='London';
+Empty set (0.00 sec)
+
+mysql>Enter password: ****
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 11
+Server version: 5.5.61 MySQL Community Server (GPL)
+
+Copyright (c) 2000, 2018, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> use assignment
+Database changed
+mysql> select * from salespeople;
++------+---------+-----------+------+
+| SNUM | SName   | City      | Comm |
++------+---------+-----------+------+
+| 1001 | Peel    | Lodon     | 0.12 |
+| 1002 | Serres  | San jose  | 0.13 |
+| 1003 | Axelrod | New york  | 0.10 |
+| 1004 | Motika  | Lodon     | 0.11 |
+| 1005 | Fran    | Lodoon    | 0.26 |
+| 1007 | Rifkin  | Barcelona | 0.15 |
++------+---------+-----------+------+
+6 rows in set (0.00 sec)
+
+mysql> select * from customers;
++------+----------+----------+--------+------+
+| Cnum | Cname    | City     | rating | Snum |
++------+----------+----------+--------+------+
+| 2001 | Hoffman  | london   | 100    | 1001 |
+| 2002 | Giovanni | Rome     | 200    | 1003 |
+| 2003 | Liu      | San jose | 200    | 1002 |
+| 2004 | Grass    | Berlin   | 300    | 1002 |
+| 2006 | Clemens  | london   | 100    | 1001 |
+| 2007 | Pereira  | Rome     | 100    | 1004 |
+| 2008 | Cisneros | San jose | 300    | 1007 |
++------+----------+----------+--------+------+
+7 rows in set (0.00 sec)
+
+mysql> select * from orders;
++------+---------+------------+------+------+
+| Onum | Amt     | Odate      | Cnum | Snum |
++------+---------+------------+------+------+
+| 3001 |   18.69 | 1996-03-10 | 2008 | 1007 |
+| 3002 | 1900.10 | 1996-03-10 | 2007 | 1004 |
+| 3003 |  767.19 | 1996-03-10 | 2001 | 1001 |
+| 3005 | 5160.45 | 1996-03-10 | 2003 | 1002 |
+| 3006 | 1098.16 | 1996-03-10 | 2008 | 1007 |
+| 3007 |   75.75 | 1996-04-10 | 2002 | 1003 |
+| 3008 | 4723.00 | 1996-05-10 | 2006 | 1001 |
+| 3009 | 1713.23 | 1996-04-10 | 2002 | 1003 |
+| 3010 | 1309.95 | 1996-06-10 | 2004 | 1002 |
+| 3011 | 9891.88 | 1996-06-10 | 2006 | 1001 |
++------+---------+------------+------+------+
+10 rows in set (0.00 sec)
+
+mysql> SElECT s.sname,s.city,s.comm
+    -> From Salespeople s
+    -> Where city='London';
+Empty set (0.00 sec)
+
+mysql>  SElECT sname,comm
+    -> From Salespeople
+    -> Where city='London';
+Empty set (0.00 sec)
+
+mysql>   SElECT sname,comm
+    ->     -> From Salespeople
+    ->     -> Where city='London';
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '> From Salespeople
+    -> Where city='London'' at line 2
+mysql> Empty set (0.00 sec)
+    ->
+    ->
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Empty set (0.00 sec)' at line 1
+mysql>   SElECT sname,comm
+    ->     -> From Salespeople
+    ->     -> Where city='London';
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '> From Salespeople
+    -> Where city='London'' at line 2
+mysql> Empty set (0.00 sec)
+    ->
+    -> mysql>;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Empty set (0.00 sec)
+
+mysql>' at line 1
+mysql> SELECT sname, comm
+    -> From Salespeople
+    -> Where city='London';
+Empty set (0.00 sec)
+
+mysql> SELECT SName, Comm
+    -> FROM Salespeople
+    -> WHERE City='london';
+Empty set (0.00 sec)
+
+mysql> SELECT CName from customers
+    ->     where City = 'San Jose'
+    ->      AND Rating >200;
++----------+
+| CName    |
++----------+
+| Cisneros |
++----------+
+1 row in set (0.00 sec)
+
+mysql> select
+    -> s.Snum, SName, count(o.snum) As OrderCount, max(o.amt) As AMOUNT
+    -> from
+    -> salespeople s
+    -> INNER JOIN orders o
+    -> ON s.snum = o.snum
+    -> GROUP BY Sname
+    -> Order by s.Snum;
++------+---------+------------+---------+
+| Snum | SName   | OrderCount | AMOUNT  |
++------+---------+------------+---------+
+| 1001 | Peel    |          3 | 9891.88 |
+| 1002 | Serres  |          2 | 5160.45 |
+| 1003 | Axelrod |          2 | 1713.23 |
+| 1004 | Motika  |          1 | 1900.10 |
+| 1007 | Rifkin  |          2 | 1098.16 |
++------+---------+------------+---------+
+5 rows in set (0.00 sec)
+
+mysql> select onum,sname
+    -> from salespeople s
+    -> INNER JOIN  orders o
+    -> ON s.snum=o.snum
+    -> where sname = 'Motika';
++------+--------+
+| onum | sname  |
++------+--------+
+| 3002 | Motika |
++------+--------+
+1 row in set (0.00 sec)
+
+mysql> select
+    -> SName, count(c.snum) As CustCount
+    -> from
+    -> salespeople s
+    -> INNER JOIN customers c
+    -> ON s.snum = c.snum
+    -> GROUP BY Sname
+    -> Having count(Sname)>1;
++--------+-----------+
+| SName  | CustCount |
++--------+-----------+
+| Peel   |         2 |
+| Serres |         2 |
++--------+-----------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT CName
+    -> from customers c
+    -> INNER JOIN orders o
+    -> ON c.snum=o.snum
+    -> where odate like'%-03-10';
++----------+
+| CName    |
++----------+
+| Cisneros |
+| Pereira  |
+| Hoffman  |
+| Clemens  |
+| Liu      |
+| Grass    |
+| Cisneros |
++----------+
+7 rows in set, 1 warning (0.00 sec)
+
+mysql>
+mysql> SELECT CName, odate
+    -> from customers c
+    -> INNER JOIN orders o
+    -> ON c.snum=o.snum
+    -> where odate like'%-03-10';
++----------+------------+
+| CName    | odate      |
++----------+------------+
+| Cisneros | 1996-03-10 |
+| Pereira  | 1996-03-10 |
+| Hoffman  | 1996-03-10 |
+| Clemens  | 1996-03-10 |
+| Liu      | 1996-03-10 |
+| Grass    | 1996-03-10 |
+| Cisneros | 1996-03-10 |
++----------+------------+
+7 rows in set, 1 warning (0.00 sec)
+
+mysql> SELECT CName, odate
+    -> from customers c
+    -> INNER JOIN orders o
+    -> ON c.cnum=o.cnum
+    -> where odate like'%-03-10';
++----------+------------+
+| CName    | odate      |
++----------+------------+
+| Cisneros | 1996-03-10 |
+| Pereira  | 1996-03-10 |
+| Hoffman  | 1996-03-10 |
+| Liu      | 1996-03-10 |
+| Cisneros | 1996-03-10 |
++----------+------------+
+5 rows in set, 1 warning (0.00 sec)
+
+mysql> SELECT CName, odate
+    -> from customers c
+    -> INNER JOIN orders o
+    -> ON c.cnum=o.cnum;
++----------+------------+
+| CName    | odate      |
++----------+------------+
+| Cisneros | 1996-03-10 |
+| Pereira  | 1996-03-10 |
+| Hoffman  | 1996-03-10 |
+| Liu      | 1996-03-10 |
+| Cisneros | 1996-03-10 |
+| Giovanni | 1996-04-10 |
+| Clemens  | 1996-05-10 |
+| Giovanni | 1996-04-10 |
+| Grass    | 1996-06-10 |
+| Clemens  | 1996-06-10 |
++----------+------------+
+10 rows in set (0.00 sec)
+
+mysql> select
+    ->     s.Snum, SName, count(o.snum) As OrderCount, sum(o.amt) As AMOUNT, o.odate
+    ->      from
+    ->      salespeople s
+    ->      INNER JOIN orders o
+    ->      ON s.snum = o.snum
+    ->      GROUP BY odate
+    ->      Order by s.Snum;
++------+---------+------------+----------+------------+
+| Snum | SName   | OrderCount | AMOUNT   | odate      |
++------+---------+------------+----------+------------+
+| 1001 | Peel    |          5 |  8944.59 | 1996-03-10 |
+| 1001 | Peel    |          1 |  4723.00 | 1996-05-10 |
+| 1001 | Peel    |          2 | 11201.83 | 1996-06-10 |
+| 1003 | Axelrod |          2 |  1788.98 | 1996-04-10 |
++------+---------+------------+----------+------------+
+4 rows in set (0.00 sec)
+
+mysql> select
+    ->     o.odate, count(o.snum) As OrderCount, sum(o.amt) As AMOUNT,
+    ->      from
+    ->      salespeople s
+    ->      INNER JOIN orders o
+    ->      ON s.snum = o.snum
+    ->      GROUP BY odate
+    ->      Order by odate;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'from
+     salespeople s
+     INNER JOIN orders o
+     ON s.snum = o.snum
+     GR' at line 3
+mysql>    select
+    ->     o.odate, count(o.snum) As OrderCount, sum(o.amt) As AMOUNT
+    ->      from
+    ->      salespeople s
+    ->      INNER JOIN orders o
+    ->      ON s.snum = o.snum
+    ->      GROUP BY odate
+    ->      Order by odate;
++------------+------------+----------+
+| odate      | OrderCount | AMOUNT   |
++------------+------------+----------+
+| 1996-03-10 |          5 |  8944.59 |
+| 1996-04-10 |          2 |  1788.98 |
+| 1996-05-10 |          1 |  4723.00 |
+| 1996-06-10 |          2 | 11201.83 |
++------------+------------+----------+
+4 rows in set (0.00 sec)
+
+mysql> select
+    ->     o.odate, count(o.snum) As OrderCount, sum(o.amt) As AMOUNT
+    ->      from
+    ->      salespeople s
+    ->      INNER JOIN orders o
+    ->      ON s.snum = o.snum
+    ->      where sum(o.amt)>2000
+    ->      GROUP BY odate
+    ->      Order by odate;
+ERROR 1111 (HY000): Invalid use of group function
+mysql> select
+    ->     o.odate, count(o.snum) As OrderCount, sum(o.amt) As AMOUNT
+    ->      from
+    ->      salespeople s
+    ->      INNER JOIN orders o
+    ->      ON s.snum = o.snum
+    ->      where sum(o.amt)>2000
+    ->      GROUP BY odate
+    ->      where sum(o.amt)>2000
+    ->      Order by odate;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'where sum(o.amt)>2000
+     Order by odate' at line 9
+mysql>  select
+    ->     o.odate, count(o.snum) As OrderCount, sum(o.amt) As AMOUNT
+    ->      from
+    ->      salespeople s
+    ->      INNER JOIN orders o
+    ->      ON s.snum = o.snum
+    ->      where sum(o.amt)>2000
+    ->      GROUP BY odate
+    ->      where AMOUNT>2000
+    ->      Order by odate;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'where AMOUNT>2000
+     Order by odate' at line 9
+mysql>  select
+    ->     o.odate, count(o.snum) As OrderCount, sum(o.amt) As AMOUNT
+    ->      from
+    ->      salespeople s
+    ->      INNER JOIN orders o
+    ->      ON s.snum = o.snum
+    ->      where sum(o.amt)>2000
+    ->      GROUP BY odate
+    ->      Having(AMOUNT)>2000
+    ->      Order by odate;
+ERROR 1111 (HY000): Invalid use of group function
+mysql> select
+    ->     o.odate, count(o.snum) As OrderCount, sum(o.amt) As AMOUNT
+    ->      from
+    ->      salespeople s
+    ->      INNER JOIN orders o
+    ->      ON s.snum = o.snum
+    ->
+    ->      GROUP BY odate
+    ->      Having(sum(o.amt))>2000
+    ->      Order by odate;
++------------+------------+----------+
+| odate      | OrderCount | AMOUNT   |
++------------+------------+----------+
+| 1996-03-10 |          5 |  8944.59 |
+| 1996-05-10 |          1 |  4723.00 |
+| 1996-06-10 |          2 | 11201.83 |
++------------+------------+----------+
+3 rows in set (0.00 sec)
+
+mysql> select *
+    -> from orders
+    -> where Amt >ANY
+    -> (SELECT amt From orders
+    -> Where odate='19960610');
++------+---------+------------+------+------+
+| Onum | Amt     | Odate      | Cnum | Snum |
++------+---------+------------+------+------+
+| 3002 | 1900.10 | 1996-03-10 | 2007 | 1004 |
+| 3005 | 5160.45 | 1996-03-10 | 2003 | 1002 |
+| 3008 | 4723.00 | 1996-05-10 | 2006 | 1001 |
+| 3009 | 1713.23 | 1996-04-10 | 2002 | 1003 |
+| 3011 | 9891.88 | 1996-06-10 | 2006 | 1001 |
++------+---------+------------+------+------+
+5 rows in set (0.00 sec)
+
+mysql> select *
+    -> from orders
+    -> where Amt >
+    -> (SELECT MIN(amt) From orders
+    -> Where odate='19960610');
++------+---------+------------+------+------+
+| Onum | Amt     | Odate      | Cnum | Snum |
++------+---------+------------+------+------+
+| 3002 | 1900.10 | 1996-03-10 | 2007 | 1004 |
+| 3005 | 5160.45 | 1996-03-10 | 2003 | 1002 |
+| 3008 | 4723.00 | 1996-05-10 | 2006 | 1001 |
+| 3009 | 1713.23 | 1996-04-10 | 2002 | 1003 |
+| 3011 | 9891.88 | 1996-06-10 | 2006 | 1001 |
++------+---------+------------+------+------+
+5 rows in set (0.00 sec)
+
+mysql> select Onum, Odate, Amt
+    -> from orders
+    -> where Amt >ANY
+    -> (SELECT amt From orders
+    -> Where odate='19960610')
+    -> Order by Odate;
++------+------------+---------+
+| Onum | Odate      | Amt     |
++------+------------+---------+
+| 3002 | 1996-03-10 | 1900.10 |
+| 3005 | 1996-03-10 | 5160.45 |
+| 3009 | 1996-04-10 | 1713.23 |
+| 3008 | 1996-05-10 | 4723.00 |
+| 3011 | 1996-06-10 | 9891.88 |
++------+------------+---------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT Cname, Sname, rating
+    ->      From salespeople s inner JOIN customers c
+    ->      On s.snum=c.snum
+    ->      WHERE rating  IN(300);
++----------+--------+--------+
+| Cname    | Sname  | rating |
++----------+--------+--------+
+| Grass    | Serres | 300    |
+| Cisneros | Rifkin | 300    |
++----------+--------+--------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT rating, Cname
+    ->  From Customers
+    -> Group by rating;
++--------+----------+
+| rating | Cname    |
++--------+----------+
+| 100    | Hoffman  |
+| 200    | Giovanni |
+| 300    | Grass    |
++--------+----------+
+3 rows in set (0.00 sec)
+
+mysql>
+mysql> SELECT Count(rating)as count,rating, Cname
+    ->  From Customers
+    -> Group by rating;
++-------+--------+----------+
+| count | rating | Cname    |
++-------+--------+----------+
+|     3 | 100    | Hoffman  |
+|     2 | 200    | Giovanni |
+|     2 | 300    | Grass    |
++-------+--------+----------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT Count(rating)as count, rating, Cname
+    ->  From Customers c1 INNER join Customers c2
+    -> On C1.Cnum=c2.Cnum
+    -> Group by rating;
+ERROR 1052 (23000): Column 'rating' in field list is ambiguous
+mysql>
+mysql>
+mysql> SELECT Count(c1.rating)as count, c1.rating, c1.Cname
+    ->  From Customers c1 INNER join Customers c2
+    -> On C1.Cnum=c2.Cnum
+    -> Group by c1.rating;
++-------+--------+----------+
+| count | rating | Cname    |
++-------+--------+----------+
+|     3 | 100    | Hoffman  |
+|     2 | 200    | Giovanni |
+|     2 | 300    | Grass    |
++-------+--------+----------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT  c1.rating, c1.Cname
+    ->  From Customers c1 INNER join Customers c2
+    -> On C1.Cnum=c2.Cnum
+    -> Group by c1.rating;
++--------+----------+
+| rating | Cname    |
++--------+----------+
+| 100    | Hoffman  |
+| 200    | Giovanni |
+| 300    | Grass    |
++--------+----------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT  c1.rating, c1.Cname
+    ->  From Customers c1 INNER join Customers c2
+    -> On C1.Cnum=c2.Cnum
+    -> ;
++--------+----------+
+| rating | Cname    |
++--------+----------+
+| 100    | Hoffman  |
+| 200    | Giovanni |
+| 200    | Liu      |
+| 300    | Grass    |
+| 100    | Clemens  |
+| 100    | Pereira  |
+| 300    | Cisneros |
++--------+----------+
+7 rows in set (0.00 sec)
+
+mysql>
+mysql> SELECT SUM(3,2);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '2)' at line 1
+mysql> SELECT SUM(3,2);SELECT CName From
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '2)' at line 1
+    -> CNume>1000
+    -> (SELECT SNum From Salespeople
+    -> where sname='serres') e;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '>1000
+(SELECT SNum From Salespeople
+where sname='serres') e' at line 2
+mysql>
+mysql>
+mysql> SELECT CName From
+    -> CName>1000
+    -> (SELECT SNum From Salespeople
+    -> where sname='serres') e;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '>1000
+(SELECT SNum From Salespeople
+where sname='serres') e' at line 2
+mysql> SELECT SNum From Salespeople
+    -> where sname='serres';
++------+
+| SNum |
++------+
+| 1002 |
++------+
+1 row in set (0.00 sec)
+
+mysql> SELECT CName From
+    -> CName>(1000 +
+    -> (SELECT SNum From Salespeople
+    -> where sname='serres')) e;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '>(1000 +
+(SELECT SNum From Salespeople
+where sname='serres')) e' at line 2
+mysql> SELECT CName From
+    -> CNum>(1000 +
+    -> (SELECT SNum From Salespeople
+    -> where sname='serres')) e;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '>(1000 +
+(SELECT SNum From Salespeople
+where sname='serres')) e' at line 2
+mysql> SELECT CName From
+    -> CNum>1000 +
+    -> (SELECT SNum From Salespeople
+    -> where sname='serres') ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '>1000 +
+(SELECT SNum From Salespeople
+where sname='serres')' at line 2
+mysql> SELECT (2+3);
++-------+
+| (2+3) |
++-------+
+|     5 |
++-------+
+1 row in set (0.00 sec)
+
+mysql> SELECT CName From
+    -> CNum>(1000 +
+    -> (SELECT SNum From Salespeople
+    -> where sname='serres') );
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '>(1000 +
+(SELECT SNum From Salespeople
+where sname='serres') )' at line 2
+mysql> SELECT CNum FROM CUStomers
+    -> where Cnum>2002;
++------+
+| CNum |
++------+
+| 2003 |
+| 2004 |
+| 2006 |
+| 2007 |
+| 2008 |
++------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT CName From
+    -> Where CNum>(1000 +
+    -> (SELECT SNum From Salespeople
+    -> where sname='serres') ) ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Where CNum>(1000 +
+(SELECT SNum From Salespeople
+where sname='serres') )' at line 2
+mysql> SELECT CName From Customers
+    -> Where CNum>(1000 +
+    -> (SELECT SNum From Salespeople
+    -> where sname='serres') ) ;
++----------+
+| CName    |
++----------+
+| Liu      |
+| Grass    |
+| Clemens  |
+| Pereira  |
+| Cisneros |
++----------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT CNum, CName From Customers
+    -> Where CNum>(1000 +
+    -> (SELECT SNum From Salespeople
+    -> where sname='serres') ) ;
++------+----------+
+| CNum | CName    |
++------+----------+
+| 2003 | Liu      |
+| 2004 | Grass    |
+| 2006 | Clemens  |
+| 2007 | Pereira  |
+| 2008 | Cisneros |
++------+----------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT SName, Comm*100 As 'Comm in Percentage'
+    -> FROM Salespeople
+    -> Order By 'Comm in Percentage' ;
++---------+--------------------+
+| SName   | Comm in Percentage |
++---------+--------------------+
+| Peel    |              12.00 |
+| Serres  |              13.00 |
+| Axelrod |              10.00 |
+| Motika  |              11.00 |
+| Fran    |              26.00 |
+| Rifkin  |              15.00 |
++---------+--------------------+
+6 rows in set (0.00 sec)
+
+mysql>
+mysql> SELECT SName, ROUND(Comm*100) As 'Comm in Percentage'
+    -> FROM Salespeople
+    -> Order By 'Comm in Percentage' ;
++---------+--------------------+
+| SName   | Comm in Percentage |
++---------+--------------------+
+| Peel    |                 12 |
+| Serres  |                 13 |
+| Axelrod |                 10 |
+| Motika  |                 11 |
+| Fran    |                 26 |
+| Rifkin  |                 15 |
++---------+--------------------+
+6 rows in set (0.00 sec)
+
+mysql> SELECT SName, CONCAT(ROUND(Comm*100),'%') As 'Comm in Percentage'
+    -> FROM Salespeople
+    -> Order By 'Comm in Percentage' ;
++---------+--------------------+
+| SName   | Comm in Percentage |
++---------+--------------------+
+| Peel    | 12%                |
+| Serres  | 13%                |
+| Axelrod | 10%                |
+| Motika  | 11%                |
+| Fran    | 26%                |
+| Rifkin  | 15%                |
++---------+--------------------+
+6 rows in set (0.00 sec)
+
+mysql> SELECT SName, CONCAT(ROUND('  ',Comm*100),'%') As 'Comm'
+    -> FROM Salespeople
+    -> Order By 'Comm in Percentage' ;
++---------+------+
+| SName   | Comm |
++---------+------+
+| Peel    | 0%   |
+| Serres  | 0%   |
+| Axelrod | 0%   |
+| Motika  | 0%   |
+| Fran    | 0%   |
+| Rifkin  | 0%   |
++---------+------+
+6 rows in set (0.00 sec)
+
+mysql>
+mysql> SELECT SName, CONCAT('   ',ROUND(Comm*100),'%') As 'Comm'
+    -> FROM Salespeople
+    -> Order By 'Comm in Percentage' ;
++---------+--------+
+| SName   | Comm   |
++---------+--------+
+| Peel    |    12% |
+| Serres  |    13% |
+| Axelrod |    10% |
+| Motika  |    11% |
+| Fran    |    26% |
+| Rifkin  |    15% |
++---------+--------+
+6 rows in set (0.00 sec)
+
+mysql>
+mysql> select sname, odate, max(amt)
+    -> from salespeople s inner join orders o
+    -> on s.snum=o.snum
+    -> group by o.snum, odate;
++---------+------------+----------+
+| sname   | odate      | max(amt) |
++---------+------------+----------+
+| Peel    | 1996-03-10 |   767.19 |
+| Peel    | 1996-05-10 |  4723.00 |
+| Peel    | 1996-06-10 |  9891.88 |
+| Serres  | 1996-03-10 |  5160.45 |
+| Serres  | 1996-06-10 |  1309.95 |
+| Axelrod | 1996-04-10 |  1713.23 |
+| Motika  | 1996-03-10 |  1900.10 |
+| Rifkin  | 1996-03-10 |  1098.16 |
++---------+------------+----------+
+8 rows in set (0.00 sec)
+
+mysql> select sname, odate, max(amt)
+    -> from salespeople s inner join orders o
+    -> on s.snum=o.snum
+    -> group by o.snum, odate
+    -> Having(Max(amt))>3000;
++--------+------------+----------+
+| sname  | odate      | max(amt) |
++--------+------------+----------+
+| Peel   | 1996-05-10 |  4723.00 |
+| Peel   | 1996-06-10 |  9891.88 |
+| Serres | 1996-03-10 |  5160.45 |
++--------+------------+----------+
+3 rows in set (0.00 sec)
+
+mysql> select sname, odate, max(amt)
+    -> from salespeople s inner join orders o
+    -> on s.snum=o.snum
+    -> group by o.snum, odate
+    -> Where odate Like %-03-10;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Where odate Like %-03-10' at line 5
+mysql> select sname, odate, max(amt)
+    -> from salespeople s inner join orders o
+    -> on s.snum=o.snum
+    -> group by o.snum, odate
+    -> Where odate=19960310;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Where odate=19960310' at line 5
+mysql> SELECT SName, Odate, Amt
+    -> From (select sname, odate, max(amt)
+    -> from salespeople s inner join orders o
+    -> on s.snum=o.snum
+    -> group by o.snum, odate)
+    -> Where Odate='19960310'
+    -> ;
+ERROR 1248 (42000): Every derived table must have its own alias
+mysql> SELECT e.SName, e.Odate, e.Amt
+    -> From (select sname, odate, max(amt)
+    -> from salespeople s inner join orders o
+    -> on s.snum=o.snum
+    -> group by o.snum, odate) e
+    -> Where Odate='19960310';
+ERROR 1054 (42S22): Unknown column 'e.Amt' in 'field list'
+mysql> SELECT e.SName, e.Odate, e.max(Amt) AS Amount
+    -> From (select sname, odate, max(amt)
+    -> from salespeople s inner join orders o
+    -> on s.snum=o.snum
+    -> group by o.snum, odate) e
+    -> Where Odate='19960310'
+    -> ;
+ERROR 1630 (42000): FUNCTION e.max does not exist. Check the 'Function Name Parsing and Resolution' section in the Reference Manual
+mysql> SELECT e.SName, e.Odate
+    -> From (select sname, odate, max(amt)
+    -> from salespeople s inner join orders o
+    -> on s.snum=o.snum
+    -> group by o.snum, odate) e
+    -> Where Odate='19960310'
+    -> ;
++--------+------------+
+| SName  | Odate      |
++--------+------------+
+| Peel   | 1996-03-10 |
+| Serres | 1996-03-10 |
+| Motika | 1996-03-10 |
+| Rifkin | 1996-03-10 |
++--------+------------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT e.SName, e.Odate, e.Amount
+    -> From (select sname, odate, max(amt) AS Amount
+    -> from salespeople s inner join orders o
+    -> on s.snum=o.snum
+    -> group by o.snum, odate) e
+    -> Where Odate='19960310'
+    -> ;
++--------+------------+---------+
+| SName  | Odate      | Amount  |
++--------+------------+---------+
+| Peel   | 1996-03-10 |  767.19 |
+| Serres | 1996-03-10 | 5160.45 |
+| Motika | 1996-03-10 | 1900.10 |
+| Rifkin | 1996-03-10 | 1098.16 |
++--------+------------+---------+
+4 rows in set (0.00 sec)
+
+mysql>  select
+    ->     o.odate, count(o.snum) As OrderCount, sum(o.amt) As AMOUNT
+    ->      from
+    ->      salespeople s
+    ->      INNER JOIN orders o
+    ->      ON s.snum = o.snum
+    ->
+    ->      GROUP BY odate
+    ->      Having(sum(o.amt))>2000
+    ->      Order by odate;
++------------+------------+----------+
+| odate      | OrderCount | AMOUNT   |
++------------+------------+----------+
+| 1996-03-10 |          5 |  8944.59 |
+| 1996-05-10 |          1 |  4723.00 |
+| 1996-06-10 |          2 | 11201.83 |
++------------+------------+----------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT Cname, City From
+    -> Salespeople s INNER JOIN Customers c
+    -> ON s.SNUM=c.SNum
+    -> where Snum=1002;
+ERROR 1052 (23000): Column 'City' in field list is ambiguous
+mysql> SELECT c.Cname, c.City From
+    -> Salespeople s INNER JOIN Customers c
+    -> ON s.SNUM=c.SNum
+    -> where Snum=1002;
+ERROR 1052 (23000): Column 'Snum' in where clause is ambiguous
+mysql> SELECT c.Cname, c.City From
+    -> Salespeople s INNER JOIN Customers c
+    -> ON s.SNUM=c.SNum
+    -> where s.Snum=1002;
++-------+----------+
+| Cname | City     |
++-------+----------+
+| Liu   | San jose |
+| Grass | Berlin   |
++-------+----------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT c1.Cname, c1.City
+    -> From Customers c1 INNER JOIN Customers c2
+    -> ON C1.city=c1.city
+    -> Where City=
+    -> (SELECT c.Cname, c.City From
+    -> Salespeople s INNER JOIN Customers c
+    -> ON s.SNUM=c.SNum
+    -> where s.Snum=1002) a;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'a' at line 8
+mysql> SELECT c1.Cname, c1.City
+    -> From Customers c1 INNER JOIN Customers c2
+    -> ON C1.city=c1.city
+    -> Where City=
+    -> (SELECT c.Cname, c.City From
+    -> Salespeople s INNER JOIN Customers c
+    -> ON s.SNUM=c.SNum
+    -> where s.Snum=1002);
+ERROR 1052 (23000): Column 'City' in where clause is ambiguous
+mysql> SELECT c1.Cname, c1.City
+    -> From Customers c1 INNER JOIN Customers c2
+    -> ON C1.city=c1.city
+    -> Where c1.City=
+    -> (SELECT c.Cname, c.City From
+    -> Salespeople s INNER JOIN Customers c
+    -> ON s.SNUM=c.SNum
+    -> where s.Snum=1002);
+ERROR 1241 (21000): Operand should contain 1 column(s)
+mysql> SELECT c.Cname, c.City
+    -> From a  INNER JOIN Customers c
+    -> ON a.city=c.city
+    -> Where c1.City=
+    -> (SELECT c.Cname, c.City From
+    -> Salespeople s INNER JOIN Customers c
+    -> ON s.SNUM=c.SNum
+    -> where s.Snum=1002) a;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'a' at line 8
+mysql> SELECT c.Cname, c.City
+    -> From new a INNER JOIN Customers c
+    -> ON a.city=c.city
+    -> Where c.City=
+    -> (SELECT c.Cname, c.City From
+    -> Salespeople s INNER JOIN Customers c
+    -> ON s.SNUM=c.SNum
+    -> where s.Snum=1002) new;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'new' at line 8
+mysql> SELECT Cname, City
+    -> From Customers
+    -> Where City IN
+    -> (SELECT c.Cname, c.City From
+    -> Salespeople s INNER JOIN Customers c
+    -> ON s.SNUM=c.SNum
+    -> where s.Snum=1002);
+ERROR 1241 (21000): Operand should contain 1 column(s)
+mysql> SELECT Cname, City
+    -> From Customers
+    -> Where City IN
+    -> (SELECT c.Cname From
+    -> Salespeople s INNER JOIN Customers c
+    -> ON s.SNUM=c.SNum
+    -> where s.Snum=1002);
+Empty set (0.00 sec)
+
+mysql>
+mysql> SELECT Cname, City
+    -> From Customers
+    -> Where City IN
+    -> (SELECT  c.City From
+    -> Salespeople s INNER JOIN Customers c
+    -> ON s.SNUM=c.SNum
+    -> where s.Snum=1002);
++----------+----------+
+| Cname    | City     |
++----------+----------+
+| Liu      | San jose |
+| Grass    | Berlin   |
+| Cisneros | San jose |
++----------+----------+
+3 rows in set (0.00 sec)
+
+mysql>
+mysql>
